@@ -10,17 +10,32 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   sensor_msgs
   cmake_modules
+  message_generation
 )
 
 find_package(
   Eigen REQUIRED
 )
 
+add_service_files(
+  FILES
+  position_controller_request.srv
+  position_controller_request_full.srv
+  trajectory_set.srv
+)
+
+
+generate_messages(
+    DEPENDENCIES
+    std_msgs
+    nav_msgs
+)
+
 catkin_package(
   INCLUDE_DIRS include ${Eigen_INCLUDE_DIRS}
   LIBRARIES lee_position_controller position_controller crazyflie_onboard_controller
     roll_pitch_yawrate_thrust_controller sensfusion6 crazyflie_complementary_filter
-    mellinger_controller internal_model_controller 
+    mellinger_controller internal_model_controller
     roll_pitch_yawrate_thrust_controller_crazyflie
   CATKIN_DEPENDS geometry_msgs mav_msgs nav_msgs roscpp sensor_msgs
   DEPENDS Eigen
@@ -101,9 +116,25 @@ add_dependencies(lee_position_controller_node ${catkin_EXPORTED_TARGETS})
 target_link_libraries(lee_position_controller_node
   lee_position_controller ${catkin_LIBRARIES})
 
+add_executable(lee_position_controller_MBRL_node src/nodes/lee_position_controller_MBRL_node.cpp)
+add_dependencies(lee_position_controller_MBRL_node ${catkin_EXPORTED_TARGETS})
+target_link_libraries(lee_position_controller_MBRL_node
+  lee_position_controller ${catkin_LIBRARIES})
+
+add_executable(lee_position_controller_node_v2 src/nodes/lee_position_controller_node_v2.cpp)
+add_dependencies(lee_position_controller_node_v2 ${catkin_EXPORTED_TARGETS})
+target_link_libraries(lee_position_controller_node_v2
+  lee_position_controller ${catkin_LIBRARIES})
+
 add_executable(position_controller_node src/nodes/position_controller_node.cpp)
 add_dependencies(position_controller_node ${catkin_EXPORTED_TARGETS})
 target_link_libraries(position_controller_node
+  position_controller crazyflie_complementary_filter crazyflie_onboard_controller
+  sensfusion6 mellinger_controller internal_model_controller ${catkin_LIBRARIES})
+
+add_executable(position_controller_MBRL_node src/nodes/position_controller_MBRL_node.cpp)
+add_dependencies(position_controller_MBRL_node ${catkin_EXPORTED_TARGETS})
+target_link_libraries(position_controller_MBRL_node
   position_controller crazyflie_complementary_filter crazyflie_onboard_controller
   sensfusion6 mellinger_controller internal_model_controller ${catkin_LIBRARIES})
 
@@ -125,7 +156,7 @@ install(TARGETS lee_position_controller position_controller crazyflie_onboard_co
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
 
-install(TARGETS lee_position_controller_node position_controller_node roll_pitch_yawrate_thrust_controller_node
+install(TARGETS lee_position_controller_node lee_position_controller_MBRL_node lee_position_controller_node_v2 position_controller_node position_controller_MBRL_node roll_pitch_yawrate_thrust_controller_node
   roll_pitch_yawrate_thrust_crazyflie_node
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}

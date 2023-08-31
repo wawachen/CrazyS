@@ -6,7 +6,7 @@
   <arg name="enable_ground_truth" default="true" />
   <arg name="enable_state_estimator" default="false" />
   <arg name="log_file" default="$(arg mav_name)" />
-  <arg name="paused" value="true"/>
+  <arg name="paused" value="false"/>
   <arg name="debug" default="false"/>
   <arg name="gui" default="true"/>
   <arg name="csvFilesStoring" default="false"/>
@@ -30,7 +30,7 @@
 
   <group ns="$(arg mav_name)">
   <!-- The following lines simulate the Crazyflie dynamics -->
-    <include file="$(find rotors_gazebo)/launch/spawn_mav_crazyflie.launch">
+    <include file="$(find rotors_gazebo)/launch/spawn_mav_crazyflie_original.launch">
       <arg name="mav_name" value="$(arg mav_name)" />
       <arg name="model" value="$(find rotors_description)/urdf/mav_generic_odometry_sensor.gazebo" />
       <arg name="enable_logging" value="$(arg enable_logging)" />

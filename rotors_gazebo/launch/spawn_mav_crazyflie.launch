@@ -3,11 +3,36 @@
 <launch>
   <arg name="mav_name" default="crazyflie2"/>
   <arg name="namespace" default="$(arg mav_name)"/>
-  <arg name="model" default="$(find rotors_description)/urdf/$(arg mav_name)_base.xacro"/>
+  <arg name="model" default="$(find rotors_description)/urdf/$(arg mav_name)_with_cable.xacro"/>
   <arg name="tf_prefix" default="$(optenv ROS_NAMESPACE)"/>
   <arg name="x" default="0.0"/>
   <arg name="y" default="0.0"/>
   <arg name="z" default="0.1"/>
+  <arg name="roll" default="0.0"/>
+  <arg name="pitch" default="0.0"/>
+  <arg name="yaw" default="0.0"/>
+
+  <!-- Initial joint values for the robot -->
+  <arg name="j_uav1_x" default="0.0"/>
+  <arg name="j_uav2_x" default="0.0"/>
+  <arg name="j_uav3_x" default="0.0"/>
+  <arg name="j_uav4_x" default="0.0"/>
+
+  <arg name="j_bar1_x" default="0.0"/>
+  <arg name="j_bar2_x" default="0.0"/>
+  <arg name="j_bar3_x" default="0.0"/>
+  <arg name="j_bar4_x" default="0.0"/>
+
+  <arg name="j_uav1_y" default="0.0"/>
+  <arg name="j_uav2_y" default="0.0"/>
+  <arg name="j_uav3_y" default="0.0"/>
+  <arg name="j_uav4_y" default="0.0"/>
+
+  <arg name="j_bar1_y" default="0.0"/>
+  <arg name="j_bar2_y" default="0.0"/>
+  <arg name="j_bar3_y" default="0.0"/>
+  <arg name="j_bar4_y" default="0.0"/>
+
   <arg name="enable_logging" default="false"/>
   <arg name="enable_ground_truth" default="true"/>
   <arg name="enable_state_estimator" default="false"/>
@@ -17,6 +42,16 @@
   <arg name="enable_mellinger_controller" default="false"/>
   <arg name="enable_internal_model_controller" default="false"/>
   <arg name="enable_vi_sensor" default="false"/>
+
+  <!-- Cable and payload characteristics -->
+  <arg name="cable_length" default="$(arg cable_length)"/>
+  <arg name="cable_radius" default="$(arg cable_radius)"/>
+  <arg name="cable_mass" default="$(arg cable_mass)"/>
+  <arg name="x_payload" default="$(arg x_payload)"/>
+  <arg name="y_payload" default="$(arg y_payload)"/>
+  <arg name="z_payload" default="$(arg z_payload)"/>
+  <arg name="payload_mass" default="$(arg payload_mass)"/>
+
 
   <!-- send the robot XML to param server -->
   <param name="robot_description" command="
@@ -31,7 +66,14 @@
     log_file:=$(arg log_file)
     wait_to_record_bag:=$(arg wait_to_record_bag)
     mav_name:=$(arg mav_name)
-    namespace:=$(arg namespace)"
+    namespace:=$(arg namespace)
+    cable_length:=$(arg cable_length)
+    cable_radius:=$(arg cable_radius)
+    cable_mass:=$(arg cable_mass)
+    x_payload:=$(arg x_payload)
+    y_payload:=$(arg y_payload)
+    z_payload:=$(arg z_payload)
+    payload_mass:=$(arg payload_mass)"
   />
   <param name="tf_prefix" type="string" value="$(arg tf_prefix)" />
 
@@ -42,6 +84,25 @@
          -x $(arg x)
          -y $(arg y)
          -z $(arg z)
+         -R $(arg roll)
+         -P $(arg pitch)
+         -Y $(arg yaw)
+         -J crazyflie2_1/joint_uav_x $(arg j_uav1_x)
+         -J crazyflie2_2/joint_uav_x $(arg j_uav2_x)
+         -J crazyflie2_3/joint_uav_x $(arg j_uav3_x)
+         -J crazyflie2_4/joint_uav_x $(arg j_uav4_x)
+         -J crazyflie2_1/joint_load_x $(arg j_bar1_x)
+         -J crazyflie2_2/joint_load_x $(arg j_bar2_x)
+         -J crazyflie2_3/joint_load_x $(arg j_bar3_x)
+         -J crazyflie2_4/joint_load_x $(arg j_bar4_x)
+         -J crazyflie2_1/joint_uav_y $(arg j_uav1_y)
+         -J crazyflie2_2/joint_uav_y $(arg j_uav2_y)
+         -J crazyflie2_3/joint_uav_y $(arg j_uav3_y)
+         -J crazyflie2_4/joint_uav_y $(arg j_uav4_y)
+         -J bar/joint_load_y_1 $(arg j_bar1_y)
+         -J bar/joint_load_y_2 $(arg j_bar2_y)
+         -J bar/joint_load_y_3 $(arg j_bar3_y)
+         -J bar/joint_load_y_4 $(arg j_bar4_y)
          -model $(arg namespace)"
    respawn="false" output="screen">
   </node>

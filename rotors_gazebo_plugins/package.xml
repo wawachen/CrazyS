@@ -1,9 +1,9 @@
 <package>
   <name>rotors_gazebo_plugins</name>
-  <version>4.0.15</version>
+  <version>6.0.8</version>
   <description>The rotors_gazebo_plugins package</description>
 
-  <maintainer email="giuseppe.silano@fel.cvut.cz">Giuseppe Silano</maintainer>
+  <maintainer email="giuseppe.silano@unisannio.it">Giuseppe Silano</maintainer>
   <maintainer email="luigi.iannelli@unisannio.it">Luigi Iannelli</maintainer>
 
   <author>Giuseppe Silano</author>
@@ -37,9 +37,9 @@
   <build_depend>yaml-cpp</build_depend>
   <build_depend>protobuf-dev</build_depend>
 
-
   <!-- Dependencies needed after this package is compiled. -->
   <run_depend>cv_bridge</run_depend>
+  <run_depend>gazebo_dev</run_depend>
   <run_depend>gazebo_ros</run_depend>
   <run_depend>geometry_msgs</run_depend>
   <run_depend>libgoogle-glog-dev</run_depend>

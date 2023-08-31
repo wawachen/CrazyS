@@ -59,6 +59,7 @@ class LeePositionController {
   LeePositionController();
   ~LeePositionController();
   void InitializeParameters();
+  // void Reset_controller();
   void CalculateRotorVelocities(Eigen::VectorXd* rotor_velocities) const;
 
   void SetOdometry(const EigenOdometry& odometry);

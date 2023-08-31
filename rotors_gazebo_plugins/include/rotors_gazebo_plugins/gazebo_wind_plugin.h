@@ -29,7 +29,8 @@
 #include <gazebo/common/Plugin.hh>
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
-
+#include <std_msgs/Float32.h>
+#include <ros/ros.h>
 #include <mav_msgs/default_topics.h>  // This comes from the mav_comm repo
 
 #include "rotors_gazebo_plugins/common.h"
@@ -54,8 +55,8 @@ static constexpr double kDefaultWindGustDuration = 0.0;
 static constexpr double kDefaultWindSpeedMean = 0.0;
 static constexpr double kDefaultWindSpeedVariance = 0.0;
 
-static const math::Vector3 kDefaultWindDirection = math::Vector3(1, 0, 0);
-static const math::Vector3 kDefaultWindGustDirection = math::Vector3(0, 1, 0);
+static const ignition::math::Vector3d kDefaultWindDirection = ignition::math::Vector3d (1, 0, 0);
+static const ignition::math::Vector3d kDefaultWindGustDirection = ignition::math::Vector3d (0, 1, 0);
 
 static constexpr bool kDefaultUseCustomStaticWindField = false;
 
@@ -71,6 +72,9 @@ class GazeboWindPlugin : public ModelPlugin {
         namespace_(kDefaultNamespace),
         wind_force_pub_topic_(mav_msgs::default_topics::EXTERNAL_FORCE),
         wind_speed_pub_topic_(mav_msgs::default_topics::WIND_SPEED),
+        wind_force_x_(0.0),
+        wind_force_y_(0.0),
+        ros_node_handle_(0),
         wind_force_mean_(kDefaultWindForceMean),
         wind_force_variance_(kDefaultWindForceVariance),
         wind_gust_force_mean_(kDefaultWindGustForceMean),
@@ -130,10 +134,12 @@ class GazeboWindPlugin : public ModelPlugin {
   double wind_gust_force_variance_;
   double wind_speed_mean_;
   double wind_speed_variance_;
+  double wind_force_x_;
+  double wind_force_y_;
 
-  math::Vector3 xyz_offset_;
-  math::Vector3 wind_direction_;
-  math::Vector3 wind_gust_direction_;
+  ignition::math::Vector3d xyz_offset_;
+  ignition::math::Vector3d wind_direction_;
+  ignition::math::Vector3d wind_gust_direction_;
 
   common::Time wind_gust_end_;
   common::Time wind_gust_start_;
@@ -155,6 +161,8 @@ class GazeboWindPlugin : public ModelPlugin {
   
   /// \brief  Reads wind data from a text file and saves it.
   /// \param[in] custom_wind_field_path Path to the wind field from ~/.ros.
+  void setWindforce_x(const std_msgs::Float32::ConstPtr& msg);
+  void setWindforce_y(const std_msgs::Float32::ConstPtr& msg);
   void ReadCustomWindField(std::string& custom_wind_field_path);
   
   /// \brief  Functions for trilinear interpolation of wind field at aircraft position.
@@ -165,7 +173,7 @@ class GazeboWindPlugin : public ModelPlugin {
   ///                    of the two points to interpolate from (12 and 13).
   ///             points Pointer to an array of size 2 containing the y-coordinate 
   ///                    of the two points to interpolate from.
-  math::Vector3 LinearInterpolation(double position, math::Vector3* values, double* points) const;
+  ignition::math::Vector3d LinearInterpolation(double position, ignition::math::Vector3d * values, double* points) const;
   
   /// \brief  Bilinear interpolation
   /// \param[in]  position Pointer to an array of size 2 containing the x- and 
@@ -176,7 +184,7 @@ class GazeboWindPlugin : public ModelPlugin {
   ///                    of the eight points to interpolate from, the x-coordinate 
   ///                    of the four intermediate points (8, 9, 10 and 11), and the 
   ///                    y-coordinate of the last two intermediate points (12 and 13).
-  math::Vector3 BilinearInterpolation(double* position, math::Vector3* values, double* points) const;
+  ignition::math::Vector3d BilinearInterpolation(double* position, ignition::math::Vector3d * values, double* points) const;
   
   /// \brief  Trilinear interpolation
   /// \param[in]  link_position Vector3 containing the x, y and z-coordinates
@@ -187,12 +195,17 @@ class GazeboWindPlugin : public ModelPlugin {
   ///                    of the eight points to interpolate from, the x-coordinate 
   ///                    of the four intermediate points (8, 9, 10 and 11), and the 
   ///                    y-coordinate of the last two intermediate points (12 and 13).
-  math::Vector3 TrilinearInterpolation(math::Vector3 link_position, math::Vector3* values, double* points) const;
+  ignition::math::Vector3d TrilinearInterpolation(ignition::math::Vector3d link_position, ignition::math::Vector3d * values, double* points) const;
   
   gazebo::transport::PublisherPtr wind_force_pub_;
   gazebo::transport::PublisherPtr wind_speed_pub_;
+  ros::Subscriber wind_force_x_sub_;
+  ros::Subscriber wind_force_y_sub_;
 
   gazebo::transport::NodePtr node_handle_;
+
+  /// \brief  Handle for the ROS node.
+  ros::NodeHandle* ros_node_handle_;
 
   /// \brief    Gazebo message for sending wind data.
   /// \details  This is defined at the class scope so that it is re-created

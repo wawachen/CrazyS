@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<launch>
+  <!-- Model setup -->
+  <arg name="model1" default="$(find realsense_ros_gazebo)/urdf/test.xacro"/>
+  <!-- spawn urdf model to gazebo -->
+  <param name="robot_description1" command="$(find xacro)/xacro $(arg model1)" />
+  <node  name="urdf_spawner1" pkg="gazebo_ros" type="spawn_model" args="-z 1.0 -unpause -urdf -model test_model -param robot_description1" respawn="false" output="screen" />
+</launch>
+
+
+  

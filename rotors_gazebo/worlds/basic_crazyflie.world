@@ -8,6 +8,22 @@
     <include>
       <uri>model://sun</uri>
     </include>
+    <!-- <include>
+      <uri>model://cylinder_load</uri>
+      <pose>0.0 0.0 0.15 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://walls_b</uri>
+      <pose>1.5 0.0 0.0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://stop_label1</uri>
+      <pose>3.0 0.0 0.0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://kinect_ros</uri>
+      <pose>0.0 0.0 2.0 0 1.5707 0</pose>
+    </include> -->
 
     <!-- Only one ROS interface plugin is required per world, as any other plugin can connect a Gazebo
          topic to a ROS topic (or vise versa). -->

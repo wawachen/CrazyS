@@ -84,6 +84,16 @@ inline void eigenOdometryFromMsg(const nav_msgs::OdometryConstPtr& msg,
   odometry->angular_velocity = mav_msgs::vector3FromMsg(msg->twist.twist.angular);
 }
 
+inline void eigenOdometryFromMsg1(nav_msgs::Odometry msg,
+                                 EigenOdometry* odometry) {
+  odometry->timeStampSec = msg.header.stamp.sec;
+  odometry->timeStampNsec = msg.header.stamp.nsec;
+  odometry->position = mav_msgs::vector3FromPointMsg(msg.pose.pose.position);
+  odometry->orientation = mav_msgs::quaternionFromMsg(msg.pose.pose.orientation);
+  odometry->velocity = mav_msgs::vector3FromMsg(msg.twist.twist.linear);
+  odometry->angular_velocity = mav_msgs::vector3FromMsg(msg.twist.twist.angular);
+}
+
 inline void calculateAllocationMatrix(const RotorConfiguration& rotor_configuration,
                                       Eigen::Matrix4Xd* allocation_matrix) {
   assert(allocation_matrix != nullptr);

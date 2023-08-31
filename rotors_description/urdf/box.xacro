@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="box_plugin_macro">
+    <gazebo>
+      <plugin filename="librotors_gazebo_box_plugin.so" name="box_plugin">
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="box_macro">
+    <link name="world" />
+
+    <joint name="world_joint" type="fixed">
+      <parent link="world" />
+      <child link = "base_box" />
+      <origin xyz="0.0 0.0 3.5" rpy="0.0 1.57 0.0" />
+    </joint>
+
+    <link name="base_box">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.1 0.1 0.1" />
+      </geometry>
+    </visual>
+    </link>
+    <xacro:box_plugin_macro>
+    </xacro:box_plugin_macro>
+  </xacro:macro>
+
+</robot>

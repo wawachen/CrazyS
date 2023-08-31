@@ -52,6 +52,11 @@ void LeePositionController::InitializeParameters() {
   initialized_params_ = true;
 }
 
+// void LeePositionController::Reset_controller(){
+//   initialized_params_ = false;
+//   controller_active_ = false;
+// }
+
 void LeePositionController::CalculateRotorVelocities(Eigen::VectorXd* rotor_velocities) const {
   assert(rotor_velocities);
   assert(initialized_params_);

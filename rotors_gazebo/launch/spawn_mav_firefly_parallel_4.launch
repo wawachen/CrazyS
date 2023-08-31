@@ -1,0 +1,229 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="mav_name" default="firefly"/>
+  <arg name="namespace" default="Env0_firefly"/>
+  <arg name="namespace1" default="Env1_firefly"/>
+  <arg name="namespace2" default="Env2_firefly"/>
+  <arg name="namespace3" default="Env3_firefly"/>
+  <arg name="model" default="$(find rotors_description)/urdf/$(arg mav_name)_with_cable_2.xacro"/>
+  <arg name="tf_prefix_0" default="$(optenv ROS_NAMESPACE)_0"/>
+  <arg name="tf_prefix_1" default="$(optenv ROS_NAMESPACE)_1"/>
+  <arg name="tf_prefix_2" default="$(optenv ROS_NAMESPACE)_2"/>
+  <arg name="tf_prefix_3" default="$(optenv ROS_NAMESPACE)_3"/>
+  <arg name="x" default="0.0"/>
+  <arg name="y" default="0.0"/>
+  <arg name="y1" default="1.0"/>
+  <arg name="y2" default="2.0"/>
+  <arg name="y3" default="3.0"/>
+  <arg name="z" default="0.1"/>
+  <arg name="roll" default="0.0"/>
+  <arg name="pitch" default="0.0"/>
+  <arg name="yaw" default="0.0"/>
+
+  <!-- Initial joint values for the robot -->
+  <arg name="j_uav1_x" default="0.0"/>
+  <arg name="j_uav2_x" default="0.0"/>
+
+  <arg name="j_bar1_x" default="0.0"/>
+  <arg name="j_bar2_x" default="0.0"/>
+
+  <arg name="j_uav1_y" default="0.0"/>
+  <arg name="j_uav2_y" default="0.0"/>
+
+  <arg name="j_bar1_y" default="0.0"/>
+  <arg name="j_bar2_y" default="0.0"/>
+
+  <arg name="enable_logging" default="false"/>
+  <arg name="enable_ground_truth" default="true"/>
+  <arg name="log_file" default="$(arg mav_name)"/>
+  <arg name="wait_to_record_bag" default="false"/>
+  <arg name="enable_mavlink_interface" default="false"/>
+
+  <!-- Cable and payload characteristics -->
+  <arg name="cable_length" default="$(arg cable_length)"/>
+  <arg name="cable_radius" default="$(arg cable_radius)"/>
+  <arg name="cable_mass" default="$(arg cable_mass)"/>
+  <arg name="x_payload" default="$(arg x_payload)"/>
+  <arg name="y_payload" default="$(arg y_payload)"/>
+  <arg name="z_payload" default="$(arg z_payload)"/>
+  <arg name="payload_mass" default="$(arg payload_mass)"/>
+
+  <group ns="Env0">
+    <!-- send the robot XML to param server -->
+    <param name="robot_description" command="
+      $(find xacro)/xacro --inorder '$(arg model)'
+      enable_logging:=$(arg enable_logging)
+      enable_ground_truth:=$(arg enable_ground_truth)
+      enable_mavlink_interface:=$(arg enable_mavlink_interface)
+      log_file:=$(arg log_file)
+      wait_to_record_bag:=$(arg wait_to_record_bag)
+      mav_name:=$(arg mav_name)
+      namespace:=$(arg namespace)
+      cable_length:=$(arg cable_length)
+      cable_radius:=$(arg cable_radius)
+      cable_mass:=$(arg cable_mass)
+      x_payload:=$(arg x_payload)
+      y_payload:=$(arg y_payload)
+      z_payload:=$(arg z_payload)
+      payload_mass:=$(arg payload_mass)"
+    />
+    <param name="tf_prefix" type="string" value="$(arg tf_prefix_0)" />
+    <!-- push robot_description to factory and spawn robot in gazebo -->
+    <node name="spawn_$(arg namespace)" pkg="gazebo_ros" type="spawn_model"
+    args="-param robot_description
+          -urdf
+          -x $(arg x)
+          -y $(arg y)
+          -z $(arg z)
+          -R $(arg roll)
+          -P $(arg pitch)
+          -Y $(arg yaw)
+          -J firefly_1/joint_uav_x $(arg j_uav1_x)
+          -J firefly_2/joint_uav_x $(arg j_uav2_x)
+          -J firefly_1/joint_load_x $(arg j_bar1_x)
+          -J firefly_2/joint_load_x $(arg j_bar2_x)
+          -J firefly_1/joint_uav_y $(arg j_uav1_y)
+          -J firefly_2/joint_uav_y $(arg j_uav2_y)
+          -J bar/joint_load_y_1 $(arg j_bar1_y)
+          -J bar/joint_load_y_2 $(arg j_bar2_y)
+          -model $(arg namespace)"
+    respawn="false" output="screen">
+    </node>
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  </group>
+
+  <group ns="Env1">
+    <param name="robot_description" command="
+      $(find xacro)/xacro --inorder '$(arg model)'
+      enable_logging:=$(arg enable_logging)
+      enable_ground_truth:=$(arg enable_ground_truth)
+      enable_mavlink_interface:=$(arg enable_mavlink_interface)
+      log_file:=$(arg log_file)
+      wait_to_record_bag:=$(arg wait_to_record_bag)
+      mav_name:=$(arg mav_name)
+      namespace:=$(arg namespace1)
+      cable_length:=$(arg cable_length)
+      cable_radius:=$(arg cable_radius)
+      cable_mass:=$(arg cable_mass)
+      x_payload:=$(arg x_payload)
+      y_payload:=$(arg y_payload)
+      z_payload:=$(arg z_payload)
+      payload_mass:=$(arg payload_mass)"
+    />
+    <param name="tf_prefix" type="string" value="$(arg tf_prefix_1)" />
+    <!-- push robot_description to factory and spawn robot in gazebo -->
+    <node name="spawn_$(arg namespace1)" pkg="gazebo_ros" type="spawn_model"
+    args="-param robot_description
+          -urdf
+          -x $(arg x)
+          -y $(arg y1)
+          -z $(arg z)
+          -R $(arg roll)
+          -P $(arg pitch)
+          -Y $(arg yaw)
+          -J firefly_1/joint_uav_x $(arg j_uav1_x)
+          -J firefly_2/joint_uav_x $(arg j_uav2_x)
+          -J firefly_1/joint_load_x $(arg j_bar1_x)
+          -J firefly_2/joint_load_x $(arg j_bar2_x)
+          -J firefly_1/joint_uav_y $(arg j_uav1_y)
+          -J firefly_2/joint_uav_y $(arg j_uav2_y)
+          -J bar/joint_load_y_1 $(arg j_bar1_y)
+          -J bar/joint_load_y_2 $(arg j_bar2_y)
+          -model $(arg namespace1)"
+    respawn="false" output="screen">
+    </node>
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  </group>
+
+  <group ns="Env2">
+    <param name="robot_description" command="
+      $(find xacro)/xacro --inorder '$(arg model)'
+      enable_logging:=$(arg enable_logging)
+      enable_ground_truth:=$(arg enable_ground_truth)
+      enable_mavlink_interface:=$(arg enable_mavlink_interface)
+      log_file:=$(arg log_file)
+      wait_to_record_bag:=$(arg wait_to_record_bag)
+      mav_name:=$(arg mav_name)
+      namespace:=$(arg namespace2)
+      cable_length:=$(arg cable_length)
+      cable_radius:=$(arg cable_radius)
+      cable_mass:=$(arg cable_mass)
+      x_payload:=$(arg x_payload)
+      y_payload:=$(arg y_payload)
+      z_payload:=$(arg z_payload)
+      payload_mass:=$(arg payload_mass)"
+    />
+    <param name="tf_prefix" type="string" value="$(arg tf_prefix_2)" />
+    <!-- push robot_description to factory and spawn robot in gazebo -->
+    <node name="spawn_$(arg namespace2)" pkg="gazebo_ros" type="spawn_model"
+    args="-param robot_description
+          -urdf
+          -x $(arg x)
+          -y $(arg y2)
+          -z $(arg z)
+          -R $(arg roll)
+          -P $(arg pitch)
+          -Y $(arg yaw)
+          -J firefly_1/joint_uav_x $(arg j_uav1_x)
+          -J firefly_2/joint_uav_x $(arg j_uav2_x)
+          -J firefly_1/joint_load_x $(arg j_bar1_x)
+          -J firefly_2/joint_load_x $(arg j_bar2_x)
+          -J firefly_1/joint_uav_y $(arg j_uav1_y)
+          -J firefly_2/joint_uav_y $(arg j_uav2_y)
+          -J bar/joint_load_y_1 $(arg j_bar1_y)
+          -J bar/joint_load_y_2 $(arg j_bar2_y)
+          -model $(arg namespace2)"
+    respawn="false" output="screen">
+    </node>
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  </group>
+
+  <group ns="Env3">
+    <param name="robot_description" command="
+      $(find xacro)/xacro --inorder '$(arg model)'
+      enable_logging:=$(arg enable_logging)
+      enable_ground_truth:=$(arg enable_ground_truth)
+      enable_mavlink_interface:=$(arg enable_mavlink_interface)
+      log_file:=$(arg log_file)
+      wait_to_record_bag:=$(arg wait_to_record_bag)
+      mav_name:=$(arg mav_name)
+      namespace:=$(arg namespace3)
+      cable_length:=$(arg cable_length)
+      cable_radius:=$(arg cable_radius)
+      cable_mass:=$(arg cable_mass)
+      x_payload:=$(arg x_payload)
+      y_payload:=$(arg y_payload)
+      z_payload:=$(arg z_payload)
+      payload_mass:=$(arg payload_mass)"
+    />
+    <param name="tf_prefix" type="string" value="$(arg tf_prefix_3)" />
+    <!-- push robot_description to factory and spawn robot in gazebo -->
+    <node name="spawn_$(arg namespace3)" pkg="gazebo_ros" type="spawn_model"
+    args="-param robot_description
+          -urdf
+          -x $(arg x)
+          -y $(arg y3)
+          -z $(arg z)
+          -R $(arg roll)
+          -P $(arg pitch)
+          -Y $(arg yaw)
+          -J firefly_1/joint_uav_x $(arg j_uav1_x)
+          -J firefly_2/joint_uav_x $(arg j_uav2_x)
+          -J firefly_1/joint_load_x $(arg j_bar1_x)
+          -J firefly_2/joint_load_x $(arg j_bar2_x)
+          -J firefly_1/joint_uav_y $(arg j_uav1_y)
+          -J firefly_2/joint_uav_y $(arg j_uav2_y)
+          -J bar/joint_load_y_1 $(arg j_bar1_y)
+          -J bar/joint_load_y_2 $(arg j_bar2_y)
+          -model $(arg namespace3)"
+    respawn="false" output="screen">
+    </node>
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  </group>
+
+</launch>

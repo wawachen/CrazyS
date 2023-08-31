@@ -19,9 +19,9 @@
   limitations under the License.
 -->
 
-<robot name="crazyflie2" xmlns:xacro="http://ros.org/wiki/xacro">
+<robot  xmlns:xacro="http://ros.org/wiki/xacro">
   <!-- Properties (Taken from Novel Dynamic Inversion Architecture Design for Quadrocopter Control by Jian Wang et al.) -->
-  <xacro:property name="namespace" value="$(arg namespace)" />
+  <!-- <xacro:property name="namespace" value="$(arg namespace)" /> -->
   <xacro:property name="rotor_velocity_slowdown_sim" value="50" />
   <xacro:property name="use_mesh_file" value="true" />
   <xacro:property name="mesh_file" value="package://rotors_description/meshes/crazyflie2.dae" />
@@ -55,105 +55,156 @@
 
   <!-- Included URDF Files -->
   <xacro:include filename="$(find rotors_description)/urdf/multirotor_base.xacro" />
+  <xacro:include filename="$(find rotors_description)/urdf/component_snippets.xacro" />
 
-  <!-- Instantiate multirotor_base_macro once -->
-  <xacro:multirotor_base_macro
-    robot_namespace="${namespace}"
-    mass="${mass}"
-    body_width="${body_width}"
-    body_height="${body_height}"
-    use_mesh_file="${use_mesh_file}"
-    mesh_file="${mesh_file}">
-    <xacro:insert_block name="body_inertia" />
-  </xacro:multirotor_base_macro>
+  <xacro:macro name="crazyflie2_macro" params="namespace">
+    <!-- Instantiate multirotor_base_macro once -->
+    <xacro:multirotor_base_macro
+      robot_namespace="${namespace}"
+      mass="${mass}"
+      body_width="${body_width}"
+      body_height="${body_height}"
+      use_mesh_file="${use_mesh_file}"
+      mesh_file="${mesh_file}">
+      <xacro:insert_block name="body_inertia" />
+    </xacro:multirotor_base_macro>
 
-  <!-- Instantiate rotors -->
-  <xacro:vertical_rotor
-    robot_namespace="${namespace}"
-    suffix="front-right"
-    direction="ccw"
-    motor_constant="${motor_constant}"
-    moment_constant="${moment_constant}"
-    parent="${namespace}/base_link"
-    mass_rotor="${mass_rotor}"
-    radius_rotor="${radius_rotor}"
-    time_constant_up="${time_constant_up}"
-    time_constant_down="${time_constant_down}"
-    max_rot_velocity="${max_rot_velocity}"
-    motor_number="0"
-    rotor_drag_coefficient="${rotor_drag_coefficient}"
-    rolling_moment_coefficient="${rolling_moment_coefficient}"
-    color="Red"
-    use_own_mesh="false"
-    mesh="">
-    <origin xyz="${cos45*arm_length} -${sin45*arm_length} ${rotor_offset_top}" rpy="0 0 0" />
-    <xacro:insert_block name="rotor_inertia" />
-  </xacro:vertical_rotor>
+    <!-- Instantiate rotors -->
+    <xacro:vertical_rotor
+      robot_namespace="${namespace}"
+      suffix="front-right"
+      direction="ccw"
+      motor_constant="${motor_constant}"
+      moment_constant="${moment_constant}"
+      parent="${namespace}/base_link"
+      mass_rotor="${mass_rotor}"
+      radius_rotor="${radius_rotor}"
+      time_constant_up="${time_constant_up}"
+      time_constant_down="${time_constant_down}"
+      max_rot_velocity="${max_rot_velocity}"
+      motor_number="0"
+      rotor_drag_coefficient="${rotor_drag_coefficient}"
+      rolling_moment_coefficient="${rolling_moment_coefficient}"
+      color="Red"
+      use_own_mesh="false"
+      mesh="">
+      <origin xyz="${cos45*arm_length} -${sin45*arm_length} ${rotor_offset_top}" rpy="0 0 0" />
+      <xacro:insert_block name="rotor_inertia" />
+    </xacro:vertical_rotor>
 
-  <xacro:vertical_rotor
-    robot_namespace="${namespace}"
-    suffix="back-right"
-    direction="cw"
-    motor_constant="${motor_constant}"
-    moment_constant="${moment_constant}"
-    parent="${namespace}/base_link"
-    mass_rotor="${mass_rotor}"
-    radius_rotor="${radius_rotor}"
-    time_constant_up="${time_constant_up}"
-    time_constant_down="${time_constant_down}"
-    max_rot_velocity="${max_rot_velocity}"
-    motor_number="1"
-    rotor_drag_coefficient="${rotor_drag_coefficient}"
-    rolling_moment_coefficient="${rolling_moment_coefficient}"
-    color="Blue"
-    use_own_mesh="false"
-    mesh="">
-    <origin xyz="-${cos45*arm_length} -${sin45*arm_length} ${rotor_offset_top}" rpy="0 0 0" />
-    <xacro:insert_block name="rotor_inertia" />
-  </xacro:vertical_rotor>
+    <xacro:vertical_rotor
+      robot_namespace="${namespace}"
+      suffix="back-right"
+      direction="cw"
+      motor_constant="${motor_constant}"
+      moment_constant="${moment_constant}"
+      parent="${namespace}/base_link"
+      mass_rotor="${mass_rotor}"
+      radius_rotor="${radius_rotor}"
+      time_constant_up="${time_constant_up}"
+      time_constant_down="${time_constant_down}"
+      max_rot_velocity="${max_rot_velocity}"
+      motor_number="1"
+      rotor_drag_coefficient="${rotor_drag_coefficient}"
+      rolling_moment_coefficient="${rolling_moment_coefficient}"
+      color="Blue"
+      use_own_mesh="false"
+      mesh="">
+      <origin xyz="-${cos45*arm_length} -${sin45*arm_length} ${rotor_offset_top}" rpy="0 0 0" />
+      <xacro:insert_block name="rotor_inertia" />
+    </xacro:vertical_rotor>
 
-  <xacro:vertical_rotor
-    robot_namespace="${namespace}"
-    suffix="back-left"
-    direction="ccw"
-    motor_constant="${motor_constant}"
-    moment_constant="${moment_constant}"
-    parent="${namespace}/base_link"
-    mass_rotor="${mass_rotor}"
-    radius_rotor="${radius_rotor}"
-    time_constant_up="${time_constant_up}"
-    time_constant_down="${time_constant_down}"
-    max_rot_velocity="${max_rot_velocity}"
-    motor_number="2"
-    rotor_drag_coefficient="${rotor_drag_coefficient}"
-    rolling_moment_coefficient="${rolling_moment_coefficient}"
-    color="Blue"
-    use_own_mesh="false"
-    mesh="">
-    <origin xyz="-${cos45*arm_length} ${sin45*arm_length} ${rotor_offset_top}" rpy="0 0 0" />
-    <xacro:insert_block name="rotor_inertia" />
-  </xacro:vertical_rotor>
+    <xacro:vertical_rotor
+      robot_namespace="${namespace}"
+      suffix="back-left"
+      direction="ccw"
+      motor_constant="${motor_constant}"
+      moment_constant="${moment_constant}"
+      parent="${namespace}/base_link"
+      mass_rotor="${mass_rotor}"
+      radius_rotor="${radius_rotor}"
+      time_constant_up="${time_constant_up}"
+      time_constant_down="${time_constant_down}"
+      max_rot_velocity="${max_rot_velocity}"
+      motor_number="2"
+      rotor_drag_coefficient="${rotor_drag_coefficient}"
+      rolling_moment_coefficient="${rolling_moment_coefficient}"
+      color="Blue"
+      use_own_mesh="false"
+      mesh="">
+      <origin xyz="-${cos45*arm_length} ${sin45*arm_length} ${rotor_offset_top}" rpy="0 0 0" />
+      <xacro:insert_block name="rotor_inertia" />
+    </xacro:vertical_rotor>
 
-  <xacro:vertical_rotor
-    robot_namespace="${namespace}"
-    suffix="front-left"
-    direction="cw"
-    motor_constant="${motor_constant}"
-    moment_constant="${moment_constant}"
-    parent="${namespace}/base_link"
-    mass_rotor="${mass_rotor}"
-    radius_rotor="${radius_rotor}"
-    time_constant_up="${time_constant_up}"
-    time_constant_down="${time_constant_down}"
-    max_rot_velocity="${max_rot_velocity}"
-    motor_number="3"
-    rotor_drag_coefficient="${rotor_drag_coefficient}"
-    rolling_moment_coefficient="${rolling_moment_coefficient}"
-    color="Red"
-    use_own_mesh="false"
-    mesh="">
-    <origin xyz="${cos45*arm_length} ${sin45*arm_length} ${rotor_offset_top}" rpy="0 0 0" />
-    <xacro:insert_block name="rotor_inertia" />
-  </xacro:vertical_rotor>
+    <xacro:vertical_rotor
+      robot_namespace="${namespace}"
+      suffix="front-left"
+      direction="cw"
+      motor_constant="${motor_constant}"
+      moment_constant="${moment_constant}"
+      parent="${namespace}/base_link"
+      mass_rotor="${mass_rotor}"
+      radius_rotor="${radius_rotor}"
+      time_constant_up="${time_constant_up}"
+      time_constant_down="${time_constant_down}"
+      max_rot_velocity="${max_rot_velocity}"
+      motor_number="3"
+      rotor_drag_coefficient="${rotor_drag_coefficient}"
+      rolling_moment_coefficient="${rolling_moment_coefficient}"
+      color="Red"
+      use_own_mesh="false"
+      mesh="">
+      <origin xyz="${cos45*arm_length} ${sin45*arm_length} ${rotor_offset_top}" rpy="0 0 0" />
+      <xacro:insert_block name="rotor_inertia" />
+    </xacro:vertical_rotor>
+
+    <!-- Instantiate a controller.  -->
+    <xacro:controller_plugin_macro namespace="${namespace}" imu_sub_topic="imu" />
+
+    <!-- Enable the MAVLink interface. It is useful for the HIL (Hardware-in-the-loop) tests -->
+    <xacro:if value="$(arg enable_mavlink_interface)">
+    <!-- Instantiate mavlink telemetry interface. -->
+    <xacro:default_mavlink_interface namespace="${namespace}" imu_sub_topic="imu" rotor_count="4" />
+    </xacro:if>
+
+    <!-- Mount an MPU-9250 IMU if the state estimator is enabled, otherwise the virtual odometry sensor is used. -->
+    <xacro:if value="$(arg enable_state_estimator)">
+    <xacro:crazyflie2_imu namespace="${namespace}" parent_link="${namespace}/base_link" />
+    </xacro:if>
+
+    <!-- Mount an ideal IMU sensor if the mellinger controller is enabled, otherwise the virtual odometry sensor is used. -->
+    <xacro:if value="$(arg enable_mellinger_controller)">
+    <xacro:crazyflie2_imuIdeal namespace="${namespace}" parent_link="${namespace}/base_link" />
+    </xacro:if>
+
+    <!-- Mount a generic odometry sensor. -->
+    <xacro:crazyflie2_odometry namespace="${namespace}" parent_link="${namespace}/base_link"  />
+
+    <!-- Mount a generic odometry sensor employed as ground truth -->
+    <xacro:if value="$(arg enable_ground_truth)">
+    <xacro:ground_truth_imu_and_odometry namespace="${namespace}" parent_link="${namespace}/base_link" />
+    </xacro:if>
+
+    <xacro:if value="$(arg enable_logging)">
+    <!-- Instantiate a logger -->
+    <xacro:bag_plugin_macro
+      namespace="${namespace}"
+      bag_file="$(arg log_file)"
+      rotor_velocity_slowdown_sim="${rotor_velocity_slowdown_sim}"
+      wait_to_record_bag="$(arg wait_to_record_bag)" />
+    </xacro:if>
+
+    <!-- Mount a VI-sensor in front of the Firefly. -->
+    <xacro:if value="$(arg enable_vi_sensor)">
+     <xacro:vi_sensor_macro_without_visual
+      namespace="${namespace}/vi_sensor"
+      parent_link="${namespace}/base_link"
+      enable_cameras="true"
+      enable_depth="true"
+      enable_ground_truth="true">
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+     </xacro:vi_sensor_macro_without_visual>
+    </xacro:if>
+  </xacro:macro>
 
 </robot>

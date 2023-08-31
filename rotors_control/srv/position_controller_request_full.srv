@@ -1,0 +1,13 @@
+float64 x
+float64 y 
+float64 z
+float64 yaw
+nav_msgs/Odometry odometry
+---
+float64 m1
+float64 m2
+float64 m3
+float64 m4
+float64 m5
+float64 m6
+

@@ -1,12 +1,14 @@
 <?xml version="1.0"?>
 <launch>
+  <arg name="enable_internal_model_controller" default="true"/>
   <arg name="mav_name" default="crazyflie2"/>
   <arg name="world_name" default="basic"/>
   <arg name="enable_logging" default="false" />
-  <arg name="enable_ground_truth" default="true" />
+  <arg name="enable_ground_truth" default="false" />
   <arg name="enable_state_estimator" default="false" />
   <arg name="log_file" default="$(arg mav_name)" />
-  <arg name="paused" value="true"/>
+  <arg name="enable_mellinger_controller" default="false"/>
+  <arg name="paused" value="false"/>
   <arg name="debug" default="false"/>
   <arg name="gui" default="true"/>
   <!-- The following line causes gzmsg and gzerr messages to be printed to the console
@@ -24,12 +26,13 @@
   </include>
 
     <group ns="$(arg mav_name)">
-    <include file="$(find rotors_gazebo)/launch/spawn_mav_crazyflie.launch">
+    <include file="$(find rotors_gazebo)/launch/spawn_mav_crazyflie_original.launch">
       <arg name="mav_name" value="$(arg mav_name)" />
       <arg name="model" value="$(find rotors_description)/urdf/mav_generic_odometry_sensor.gazebo" />
       <arg name="enable_logging" value="$(arg enable_logging)" />
       <arg name="enable_ground_truth" value="$(arg enable_ground_truth)" />
       <arg name="enable_state_estimator" value="$(arg enable_state_estimator)" />
+      <arg name="enable_internal_model_controller" value="$(arg enable_internal_model_controller)" />
       <arg name="log_file" value="$(arg log_file)"/>
     </include>
 

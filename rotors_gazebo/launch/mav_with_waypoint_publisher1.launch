@@ -1,0 +1,91 @@
+<launch>
+  <arg name="mav_name" default="firefly"/>
+  <arg name="world_name" default="basic"/>
+  <arg name="enable_logging" default="false" />
+  <arg name="enable_ground_truth" default="true" />
+  <arg name="log_file" default="$(arg mav_name)" />
+  
+<!-- Payload parameters -->
+  <arg name="cable_length" default="0.3" /> <!-- [m] -->
+  <arg name="cable_radius" default="0.005" /> <!-- [m] -->
+  <arg name="cable_mass" default="0.0005" /> <!-- [kg] -->
+  <arg name="x_payload" default="0.6"/> <!-- [m] -->
+  <arg name="y_payload" default="0.02"/> <!-- [m] -->
+  <arg name="z_payload" default="0.02"/> <!-- [m] -->
+  <arg name="payload_mass" default="0.1"/> <!-- [kg] -->
+
+  <env name="GAZEBO_MODEL_PATH" value="${GAZEBO_MODEL_PATH}:$(find rotors_gazebo)/models"/>
+  <env name="GAZEBO_RESOURCE_PATH" value="${GAZEBO_RESOURCE_PATH}:$(find rotors_gazebo)/models"/>
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find rotors_gazebo)/worlds/$(arg world_name).world" />
+    <!-- <arg name="debug" value="true"/> -->
+    <arg name="paused" value="true"/>
+    <!-- <arg name="gui" value="false"/> -->
+  </include>
+
+  <group ns="$(arg mav_name)">
+    <include file="$(find rotors_gazebo)/launch/spawn_mav_firefly_2.launch">
+      <arg name="mav_name" value="$(arg mav_name)" />
+      <arg name="model" value="$(find rotors_description)/urdf/firefly_with_cable_2.xacro" />
+      <arg name="enable_logging" value="$(arg enable_logging)" />
+      <arg name="enable_ground_truth" value="$(arg enable_ground_truth)" />
+      <arg name="log_file" value="$(arg log_file)"/>
+
+      <!-- Cable and payload characteristics -->
+      <arg name="cable_length" value="$(arg cable_length)"/>
+      <arg name="cable_radius" value="$(arg cable_radius)"/>
+      <arg name="cable_mass" value="$(arg cable_mass)"/>
+      <arg name="x_payload" value="$(arg x_payload)"/>
+      <arg name="y_payload" value="$(arg y_payload)"/>
+      <arg name="z_payload" value="$(arg z_payload)"/>
+      <arg name="payload_mass" value="$(arg payload_mass)"/>
+
+      <!-- Initial position of the center of mass of the payload -->
+      <arg name="x" value="0.0"/>
+      <arg name="y" value="0.0"/>
+      <arg name="z" value="0.01"/>
+
+      <!-- Initial orientation of the robot -->
+      <arg name="roll" value="0.0"/>
+      <arg name="pitch" value="0.0"/>
+      <arg name="yaw" value="0.0"/>
+
+      <!-- Initial joint values for the robot -->
+      <arg name="j_uav1_x" value="0.0"/>
+      <arg name="j_uav2_x" value="0.0"/>
+      <arg name="j_bar1_x" value="0.0"/>
+      <arg name="j_bar2_x" value="0.0"/>
+      <arg name="j_uav1_y" value="-1.5708"/>
+      <arg name="j_uav2_y" value="1.5708"/>
+      <arg name="j_bar1_y" value="1.1708"/>
+      <arg name="j_bar2_y" value="-1.1708"/>
+
+    </include>
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  </group>
+
+
+  <group ns="$(arg mav_name)_1">
+    <node name="lee_position_controller_node" pkg="rotors_control" type="lee_position_controller_node" output="screen">
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/lee_controller_$(arg mav_name).yaml" />
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/$(arg mav_name).yaml" />
+      <remap from="odometry" to="odometry_sensor1/odometry" />
+    </node>
+    <!-- <node name="hovering_example" pkg="rotors_gazebo" type="hovering_example" output="screen"/> -->
+    <node name="waypoint_publisher" pkg="rotors_gazebo" type="waypoint_publisher" output="screen" args="0.3 0.0 1 0 10"/>
+    <!-- <node name="waypoint_publisher_file" pkg="rotors_gazebo" type="waypoint_publisher_file" output="screen" args="$(find rotors_gazebo)/resource/example_waypoints1.txt"/> -->
+  </group>
+
+  <group ns="$(arg mav_name)_2">
+    <node name="lee_position_controller_node" pkg="rotors_control" type="lee_position_controller_node" output="screen">
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/lee_controller_$(arg mav_name).yaml" />
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/$(arg mav_name).yaml" />
+      <remap from="odometry" to="odometry_sensor1/odometry" />
+    </node>
+    <!-- <node name="hovering_example" pkg="rotors_gazebo" type="hovering_example" output="screen"/> -->
+    <node name="waypoint_publisher" pkg="rotors_gazebo" type="waypoint_publisher" output="screen" args="-0.3 0.0 1 0 10"/>
+    <!-- <node name="waypoint_publisher_file" pkg="rotors_gazebo" type="waypoint_publisher_file" output="screen" args="$(find rotors_gazebo)/resource/example_waypoints2.txt"/> -->
+  </group>
+
+</launch>
